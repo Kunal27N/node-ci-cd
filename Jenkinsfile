@@ -5,12 +5,12 @@ pipeline {
     SONAR_TOKEN = credentials('sonarqube-secret')
   }
 
-  stages {
-    stage('Checkout') {
-      steps {
-        git 'https://github.com/Kunal27N/node-ci-cd.git'
-      }
-    }
+  stage('Checkout') {
+  steps {
+    git branch: 'main', credentialsId: 'github-creds', url: 'https://github.com/Kunal27N/node-ci-cd.git'
+  }
+}
+
 
     stage('Install Dependencies') {
       steps {
