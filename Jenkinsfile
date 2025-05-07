@@ -1,9 +1,12 @@
 pipeline {
     agent any
-    tools {nodejs "NodeJS"} 
+
+    tools {
+        nodejs "NodeJS"
+    }
+
     environment {
-        SONAR_HOST_URL = 'http://sonarqube:9000' // Set SonarQube server URL
-        SONAR_AUTH_TOKEN = 'sqp_251ca3581c199e1c8c8f0a3ff6130aee07069f50' // Set SonarQube authentication token
+        // Keep this minimal; use Jenkins credentials for tokens
     }
 
     stages {
@@ -15,33 +18,41 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                withNodejs('NodeJS') {
-                    sh 'npm install'
-                }
+                sh 'npm install'
             }
         }
 
         stage('Run Tests') {
             steps {
-                withNodejs('NodeJS') {
-                    sh 'npm test'
-                }
+                sh 'npm test -- --coverage' // Generates coverage/lcov.info
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv("SonarQube") {
+                withSonarQubeEnv('SonarQube') {
                     sh '''
                         sonar-scanner \
                         -Dsonar.projectKey=node-ci-cd \
                         -Dsonar.sources=. \
-                        -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-                        -Dsonar.host.url=$SONAR_HOST_URL \
-                        -Dsonar.login=$SONAR_AUTH_TOKEN
+                        -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
                     '''
                 }
             }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 1, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline execution completed.'
         }
     }
 }
