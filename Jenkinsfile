@@ -2,11 +2,11 @@ pipeline {
   agent any
 
   tools {
-    nodejs "NodeJS"  // This should be configured under Jenkins Global Tools
+    nodejs "NodeJS" // Must match what’s configured in Global Tools
   }
 
   environment {
-    SONARQUBE = "SonarQube" // Set the name of your SonarQube instance
+    SONARQUBE = "SonarQube"
   }
 
   stages {
@@ -30,12 +30,13 @@ pipeline {
 
     stage('SonarQube Analysis') {
       steps {
-        withSonarQubeEnv('SonarQube') {
-          sh 'sonar-scanner \
-            -Dsonar.projectKey=node-ci-cd \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=$SONAR_HOST_URL \
-            -Dsonar.login=$SONAR_AUTH_TOKEN'
+        withSonarQubeEnv("${SONARQUBE}") {
+          sh '''
+            sonar-scanner \
+              -Dsonar.projectKey=node-ci-cd \
+              -Dsonar.sources=. \
+              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+          '''
         }
       }
     }
