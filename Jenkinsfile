@@ -2,9 +2,13 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS' // Name of Node.js tool configured in Jenkins
+        nodejs 'NodeJS'  // Name of the Node.js installation in Jenkins
     }
 
+    environment {
+        SONAR_SCANNER_HOME = tool 'SonarQube Scanner'  // Name of the SonarQube Scanner tool in Jenkins
+    }
+    
     stages {
         stage('Checkout') {
             steps {
