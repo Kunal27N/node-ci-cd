@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   tools {
-    nodejs "NodeJS" // Must match what’s configured in Global Tools
+    nodejs "NodeJS" 
   }
 
   environment {
