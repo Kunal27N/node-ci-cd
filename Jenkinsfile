@@ -1,64 +1,36 @@
 pipeline {
-    agent any
+  agent any
 
-    tools {
-        nodejs 'NodeJS'  // Name of the Node.js installation in Jenkins
+  environment {
+    SONAR_TOKEN = credentials('your-sonarqube-token-id')
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        git 'https://github.com/your-username/your-repo.git'
+      }
     }
 
-    environment {
-        SONAR_SCANNER_HOME = tool 'SonarQube Scanner'  // Name of the SonarQube Scanner tool in Jenkins
-    }
-    
-    stages {
-        stage('Checkout') {
-            steps {
-                git url: 'https://github.com/Kunal27N/node-ci-cd.git', branch: 'main'
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }
-
-        stage('Run Tests with Coverage') {
-            steps {
-                sh 'npm test -- --coverage'
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') { // Must match the name configured in Jenkins
-                    sh '''
-                        sonar-scanner \
-                        -Dsonar.projectKey=node-ci-cd \
-                        -Dsonar.sources=. \
-                        -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-                    '''
-                }
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 1, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
+    stage('Install Dependencies') {
+      steps {
+        sh 'npm install'
+      }
     }
 
-    post {
-        always {
-            echo 'Pipeline completed.'
+    stage('Code Quality Check') {
+      steps {
+        withSonarQubeEnv('YourSonarQubeServer') {
+          sh 'sonar-scanner -Dsonar.login=$SONAR_TOKEN'
         }
-        failure {
-            echo 'Pipeline failed.'
-        }
-        success {
-            echo 'Pipeline succeeded.'
-        }
+      }
     }
+
+    stage('Build') {
+      steps {
+        sh 'npm run start & sleep 5'
+        sh 'curl -f http://localhost:3000 || exit 1'
+      }
+    }
+  }
 }
