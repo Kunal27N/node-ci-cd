@@ -5,9 +5,9 @@ pipeline {
         nodejs "NodeJS"
     }
 
-    environment {
+    // environment {
         // Keep this minimal; use Jenkins credentials for tokens
-    }
+   // }
 
     stages {
         stage('Checkout') {
