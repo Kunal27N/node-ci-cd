@@ -2,7 +2,8 @@ pipeline {
   agent any
 
   tools {
-  nodejs 'NodeJS'  // This name must match what you configured
+  nodejs 'NodeJS'
+  sonarQubeScanner 'SonarQube Scanner'  
 }
   environment {
     SONAR_TOKEN = credentials('sonarqube-secret')
