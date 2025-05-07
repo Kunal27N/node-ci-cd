@@ -24,7 +24,7 @@ pipeline {
 
     stage('Code Quality Check') {
       environment {
-        SCANNER_HOME = tool 'Sonar-scanner' // Make sure this tool is configured in Jenkins
+        SCANNER_HOME = tool 'SonarQube Scanner' // Make sure this tool is configured in Jenkins
       }
       steps {
         withSonarQubeEnv('SonarQube') {
