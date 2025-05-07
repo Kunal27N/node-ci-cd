@@ -6,9 +6,9 @@ pipeline {
         sonarScanner 'SonarScanner' // Name of SonarScanner installation in Jenkins
     }
 
-    environment {
+   // environment {
         // SonarQube token and URL are injected by withSonarQubeEnv
-    }
+   // }
 
     stages {
         stage('Checkout') {
