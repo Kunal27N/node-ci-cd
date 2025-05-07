@@ -1,6 +1,6 @@
 pipeline {
     agent any
-
+    tools {nodejs "NodeJS"} 
     environment {
         SONAR_HOST_URL = 'http://sonarqube:9000' // Set SonarQube server URL
         SONAR_AUTH_TOKEN = 'sqp_251ca3581c199e1c8c8f0a3ff6130aee07069f50' // Set SonarQube authentication token
