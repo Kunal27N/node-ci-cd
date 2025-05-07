@@ -23,7 +23,7 @@ stages {
 
     stage('Code Quality Check') {
       steps {
-        withSonarQubeEnv('YourSonarQubeServer') {
+        withSonarQubeEnv('SonarQube') {
           sh 'sonar-scanner -Dsonar.login=$SONAR_TOKEN'
         }
       }
