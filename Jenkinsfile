@@ -2,13 +2,8 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS'          // Name of Node.js installation in Jenkins
-        sonarScanner 'SonarScanner' // Name of SonarScanner installation in Jenkins
+        nodejs 'NodeJS' // Name of Node.js tool configured in Jenkins
     }
-
-   // environment {
-        // SonarQube token and URL are injected by withSonarQubeEnv
-   // }
 
     stages {
         stage('Checkout') {
@@ -31,9 +26,9 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') { // 'SonarQube' must match the Jenkins config name
+                withSonarQubeEnv('SonarQube') { // Must match the name configured in Jenkins
                     sh '''
-                        ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
+                        sonar-scanner \
                         -Dsonar.projectKey=node-ci-cd \
                         -Dsonar.sources=. \
                         -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
