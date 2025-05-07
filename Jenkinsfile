@@ -2,12 +2,13 @@ pipeline {
     agent any
 
     tools {
-        nodejs "NodeJS"
+        nodejs 'NodeJS'          // Name of Node.js installation in Jenkins
+        sonarScanner 'SonarScanner' // Name of SonarScanner installation in Jenkins
     }
 
-    // environment {
-        // Keep this minimal; use Jenkins credentials for tokens
-   // }
+    environment {
+        // SonarQube token and URL are injected by withSonarQubeEnv
+    }
 
     stages {
         stage('Checkout') {
@@ -22,17 +23,17 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Run Tests with Coverage') {
             steps {
-                sh 'npm test -- --coverage' // Generates coverage/lcov.info
+                sh 'npm test -- --coverage'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
+                withSonarQubeEnv('SonarQube') { // 'SonarQube' must match the Jenkins config name
                     sh '''
-                        sonar-scanner \
+                        ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
                         -Dsonar.projectKey=node-ci-cd \
                         -Dsonar.sources=. \
                         -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
@@ -52,7 +53,13 @@ pipeline {
 
     post {
         always {
-            echo 'Pipeline execution completed.'
+            echo 'Pipeline completed.'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+        success {
+            echo 'Pipeline succeeded.'
         }
     }
 }
